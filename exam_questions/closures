@@ -1,0 +1,30 @@
+function test() {
+  var a = 10
+
+  printer = function() { print a }
+  inc = function() { a = a + 1 }
+
+  return [ printer, inc ]
+}
+
+printer, inc = test();
+
+printer()
+inc()
+inc()
+printer()
+
+------------------------------------------------------------
+
+(defun test (foo)
+  ((lambda (a)
+    (list
+      (lambda () a)
+      (lambda () (setf a (+ a 1)))))
+   10))
+
+((lambda (lst)
+  ((cadr lst))
+  ((cadr lst))
+  ((car lst))) (test))
+

@@ -1,0 +1,28 @@
+GameObject
+-> Enemy
+-> Missile
+
+gameObjects = new GameObject[]{ new Missile(), new Enemy(), new Missile() };
+
+for (GameObject o : gameObjects) {
+  drawer.draw(o);
+  /* o.drawBy(drawer); */
+}
+
+class Drawer {
+  /* draw(GameObject o) ... */
+  draw(Enemy e) ...
+  draw(Missile e) ...
+}
+
+class GameObject {
+  drawBy(Drawer d) { ... }
+}
+
+class Missile extends GameObject {
+  drawBy(Drawer d) { ... }
+}
+
+class Enemy extends GameObject {
+  drawBy(Drawer d) { ... }
+}

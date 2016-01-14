@@ -1,0 +1,15 @@
+class Foo {
+  public static Foo instance = null;
+
+  public void finalize() {
+    instance = this;
+  }
+}
+
+main () {
+  new Foo();
+
+  System.gc();
+
+  System.out.println(Foo.instance.toString());
+}

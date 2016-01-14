@@ -1,0 +1,15 @@
+class A
+	def foo()
+		print "foo"
+		bar()
+
+	def bar()
+		print "bar"
+
+class B extends A
+	def bar()
+		print "bar2"
+
+
+A a = new B();
+a.foo()
