@@ -1,4 +1,4 @@
-# runtime_systems
+# MI-RUN - Runtime Systems
 Materials for the MI-RUN (Runtime Systems) course
 
 ## Structure
