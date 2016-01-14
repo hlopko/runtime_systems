@@ -1,0 +1,49 @@
+\usepackage{fontspec}
+\usepackage{xunicode} %Unicode extras!
+\usepackage{xltxtra}  %Fixes
+\newcommand\HUGE{\@setfontsize\Huge{30}{40}} 
+\renewcommand\familydefault{\sfdefault}
+%\usetheme{default}
+\usepackage{color}
+%\useoutertheme{default}
+%\usepackage{marvosym}
+
+\definecolor{bottomcolour}{RGB}{194,183,144}
+\definecolor{middlecolour}{RGB}{194,183,144}
+\definecolor{wtfcolor}{RGB}{84,45,40}
+\definecolor{yeahcolor}{RGB}{84,45,40}
+\definecolor{backgroundcolor}{RGB}{194,183,144}
+\definecolor{titlebackground}{RGB}{194,183,144}
+\definecolor{titlecolor}{RGB}{153,28,20}
+\definecolor{normalcolor}{RGB}{31,36,51}
+
+\newfontfamily\headingfont{ChunkFive}
+%\newfontfamily\wtffont{Yew Basturd}
+%\newfontfamily\wtffont{Qikki Reg}
+%\newfontfamily\wtffont{Fearless}
+% \newfontfamily\wtffont{SF Cartoonist Hand}
+\newfontfamily\yeahfont{Aurulent Sans}
+\newfontfamily\normaltext{Aurulent Sans}
+% \newfontfamily\libjavafont{Kingthings Foundation}
+
+\newcommand\wtftext{\LARGE\wtffont\color{wtfcolor}\itshape\textbf}
+\newcommand\yeahtext{\Large\yeahfont\color{yeahcolor}\textbf}
+\newcommand\libjavatext{\sc}
+%\newcommand\libjavatext{\libjavafont\textbf}
+\def\libjava{{\libjavatext{stx:libJava}}}
+
+\setbeamerfont{title}{size=\HUGE, family=\headingfont}
+\setbeamercolor{title}{fg=titlecolor}
+\setbeamerfont{frametitle}{size=\HUGE, family=\headingfont}
+\setbeamercolor{frametitle}{fg=titlecolor}
+
+\setbeamercolor{structure}{fg=titlebackground}
+\setbeamercolor{normal text}{fg=normalcolor, bg=backgroundcolor}
+
+\setbeamertemplate{frametitle}[default]
+%\setbeamertemplate{background canvas}[vertical shading]
+	%[bottom=backgroundcolor, top=black	]
+\setbeamertemplate{items}[]
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\setbeamercolor{mini frame}{fg=black} %no nav symbols
+\setbeamertemplate{footline}{} 

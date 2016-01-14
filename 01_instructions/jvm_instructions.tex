@@ -1,0 +1,150 @@
+\documentclass[xetex, 20pt]{beamer}
+\usepackage{amsmath, amsfonts, epsfig, xspace}
+\usepackage{pstricks,pst-node}
+%\usepackage[utf8]{inputenc}
+\usepackage[normal,tight,center]{subfigure}
+\setlength{\subfigcapskip}{-.5em}
+\usepackage{beamerthemesplit}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{textpos}
+\usetikzlibrary{patterns}
+\usetheme{libjava-theme}
+\newcommand{\putat}[3]{\begin{picture}(0,0)(0,0)\put(#1,#2){#3}\end{picture}} % just a shorthand
+\newcommand<>{\fullsizegraphic}[3]{
+  \begin{textblock*}{0cm}(#1,#2)
+  \includegraphics[width=\paperwidth]{#3}
+  \end{textblock*}
+}
+\date{}
+\author{marcel.hlopko@fit.cvut.cz}
+\title{Java Instruction Set}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+	\frametitle{Java Bytecode}
+	Just a byte array, stream of instruction codes together with their arguments
+\end{frame}
+
+\begin{frame}
+	\frametitle{Java Instructions}
+	mnemonics [<param1> <param2> ...]
+	Instructions manipulate the program stack
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conventions}
+	i	integer
+
+	l	long
+
+	s	short
+
+	b	byte
+
+	c	character
+
+	f	float
+
+	d	double
+
+	a	reference
+\end{frame}
+
+\begin{frame}
+	\frametitle{xconst <const>}
+	put constant onto the stack
+
+	e.g. iconst 200
+
+	shorthands: iconst\_1 ...
+\end{frame}
+
+\begin{frame}
+	\frametitle{xload <index>}
+	load x from local variable <index> onto the stack
+\end{frame}
+
+\begin{frame}
+	\frametitle{xstore <index>}
+	store x from the stack into local variable <index>
+\end{frame}
+
+\begin{frame}
+	\frametitle{getfield <index>}
+	takes objectRef from the stack and pushes its field val. Field is specified by fieldRef at CP at <index>
+\end{frame}
+
+\begin{frame}
+	\frametitle{putfield <index>}
+	pops objectRef and new value and stores it into its <index> field
+
+	putstatic, getstatic
+\end{frame}
+
+\begin{frame}
+	\frametitle{athrow}
+	pops exception instance and throws it
+\end{frame}
+
+\begin{frame}
+	\frametitle{return, xreturn}
+	returns from the method (xreturn with TOS)
+\end{frame}
+
+\begin{frame}
+	\frametitle{ifnull <offset>}
+	pops value, if null, then jump relatively by <offset>
+\end{frame}
+
+\begin{frame}
+	\frametitle{jumps}
+	ifnull, ifnonnull, ifge, ifgt, ifeq, ifne, iflt, ifle, if\_cmple ...
+\end{frame}
+
+\begin{frame}
+	\frametitle{Math}
+	xadd, xsub, xdiv ...
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conversions}
+	i2b, i2c, i2d, ...
+\end{frame}
+
+\begin{frame}
+	\frametitle{checkcast <index>}
+	checks TOS if its castable to classRef in CP at <index> 
+\end{frame}
+
+\begin{frame}
+	\frametitle{ldc... <index>}
+	push constant from CP
+\end{frame}
+
+\begin{frame}
+	\frametitle{monitorenter, monitorexit}
+	enters/exits monitor :)
+\end{frame}
+
+\begin{frame}
+	\frametitle{invokevirtual, invokestatic, invokeinterface, invokespecial}
+	generally takes methodRef from CP at <index> and invokes it.
+\end{frame}
+
+\begin{frame}
+	\frametitle{and few more}
+	JVM spec is available online, go and read :)
+\end{frame}
+
+\begin{frame}
+	\frametitle{Questions and Discussion}
+\end{frame}
+
+\end{document}
+
