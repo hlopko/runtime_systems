@@ -1,0 +1,184 @@
+\documentclass[xetex, 20pt]{beamer}
+\usepackage{amsmath, amsfonts, epsfig, xspace}
+\usepackage{pstricks,pst-node}
+%\usepackage[utf8]{inputenc}
+\usepackage[normal,tight,center]{subfigure}
+\setlength{\subfigcapskip}{-.5em}
+\usepackage{beamerthemesplit}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{textpos}
+\usetikzlibrary{patterns}
+\usetheme{libjava-theme}
+\newcommand{\putat}[3]{\begin{picture}(0,0)(0,0)\put(#1,#2){#3}\end{picture}} % just a shorthand
+\newcommand<>{\fullsizegraphic}[3]{
+  \begin{textblock*}{0cm}(#1,#2)
+  \includegraphics[width=\paperwidth]{#3}
+  \end{textblock*}
+}
+\date{}
+\author{marcel.hlopko@fit.cvut.cz}
+\title{Classfile Format}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+	\frametitle{Java Classfile}
+	Does not contain bytecode only! Bytecode is only a small part of classfile
+\end{frame}
+
+\begin{frame}
+	\frametitle{Magic Number}
+	4 bytes
+
+	0xCAFEBABE
+\end{frame}
+
+\begin{frame}
+	\frametitle{Version}
+	2x2 bytes
+
+	jdk 5 -> 0, 49
+
+	jdk 6 -> 0, 50
+
+	jdk 7 -> 0, 51
+\end{frame}
+
+\begin{frame}
+	\frametitle{Constant Pool}
+	2 bytes for cp\_size
+
+	cp\_info * (cp\_size - 1) bytes of constant pool
+\end{frame}
+
+\begin{frame}
+	\frametitle{Access Flags}
+	2 bytes
+
+	public, final, interface, abstract, super
+\end{frame}
+
+\begin{frame}
+	\frametitle{this class}
+	2 bytes index into CP (ClassInfo)
+\end{frame}
+
+\begin{frame}
+	\frametitle{super class}
+	2 bytes index into CP (ClassInfo)
+\end{frame}
+
+\begin{frame}
+	\frametitle{Interfaces}
+	2 bytes ifaces\_count
+	
+	2 x ifaces\_count bytes of indices into CP (ClassInfos)
+\end{frame}
+
+\begin{frame}
+	\frametitle{Fields}
+	2 bytes fields\_count
+
+	field\_info * fields\_count bytes
+\end{frame}
+
+\begin{frame}
+	\frametitle{Methods}
+	2 bytes methods\_count
+
+	method\_info * methods\_count bytes
+\end{frame}
+
+\begin{frame}
+	\frametitle{Attributes}
+	2 bytes attributes\_count
+
+	attribute\_info * attributes\_count bytes
+\end{frame}
+
+\begin{frame}
+	\frametitle{Constant Pool Content}
+
+	Literal values (integers, utf8 strings ...)
+
+	References
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: ClassRef}
+
+	Struct containting an index into CP where utf8 string describing FQDN of class is stored
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: MethodRef}
+
+	Struct containting 2 indices:
+	\begin{itemize}
+		\item one for ClassRef
+		\item one for NameAndTypeInfo
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: FieldRef}
+
+	Struct containting 2 indices:
+	\begin{itemize}
+		\item one for ClassRef
+		\item one for NameAndTypeInfo
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Class Info}
+	just index into CP where FQDN name is stored
+\end{frame}
+
+\begin{frame}
+	\frametitle{Method Info}
+	2 bytes access flags
+
+	2 bytes name index
+
+	2 bytes descriptor index
+
+	2 bytes atributes\_count
+
+	attributes\_count * attribute\_info bytes of attribute\_info
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Attribute Info}
+	describing various attributes, e.g.
+	\begin{itemize}
+		\item Constant Value
+		\item Exceptions
+		\item Inner Classes
+		\item Code ...
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Code Attribute}
+	max stack
+
+	max locals
+
+	bytecode
+
+	exceptions table
+\end{frame}
+
+\begin{frame}
+	\frametitle{Questions and Discussion}
+\end{frame}
+
+\end{document}
+

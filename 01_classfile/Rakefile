@@ -1,0 +1,58 @@
+require 'rake/clean'
+
+PROJECT = 'jvm_classfile'
+THEMEFILE = 'beamerthemelibjava-theme.sty'
+
+PDFLATEX = 'xelatex'
+EPSTOPDF = 'epstopdf'
+PDFVIEWER = 'evince'
+SPELLCHECKPROG = 'aspell -t check'
+
+EPSEXT = '.eps'
+PDFEXT = '.pdf'
+AUXFILE = "#{PROJECT}.aux"
+PDFFILE = "#{PROJECT}.pdf"
+TEXFILES = FileList['*.tex']
+BIBFILES = FileList['*.bib']
+
+CLEAN.include(['*.log','*.aux','*.bbl','*.blg','*.lof'])
+CLEAN.include(['*.dvi','*.toc','*.out','*.ps', '*.lot'])
+CLEAN.include(['*.lol', '*.nav', '*.snm', '*.vrb'])
+CLOBBER.include("#{PROJECT}.pdf")
+
+task :default => [:pdf]
+
+desc "export images, compile bibtex files, generate pdf"
+task :all => [ :pdf, :bib ]
+
+desc "generate pdf from #{PROJECT}.tex"
+task :pdf => ["#{PROJECT}.pdf"]
+
+file AUXFILE => TEXFILES do
+  build_pdf
+end
+
+file "#{PROJECT}.pdf" => [ AUXFILE, THEMEFILE ] + TEXFILES do
+  build_pdf
+end
+
+desc "generate pdf and show it"
+task :view => [:pdf] do
+  sh "#{PDFVIEWER} #{PROJECT}.pdf > /dev/null 2>&1 &"
+end
+
+desc "check spelling"
+task :spellcheck do
+  spellcheck()
+end
+
+def build_pdf()
+  sh "#{PDFLATEX} #{PROJECT}"
+end
+
+def spellcheck()
+  TEXFILES.each do
+    |each|
+    sh "#{SPELLCHECKPROG} #{each}"
+  end
+end
