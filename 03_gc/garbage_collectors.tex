@@ -1,0 +1,288 @@
+\documentclass[xetex, 20pt]{beamer}
+\usepackage{amsmath, amsfonts, epsfig, xspace}
+\usepackage{pstricks,pst-node}
+%\usepackage[utf8]{inputenc}
+\usepackage[normal,tight,center]{subfigure}
+\setlength{\subfigcapskip}{-.5em}
+\usepackage{beamerthemesplit}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usetheme{libjava-theme}
+\newcommand{\putat}[3]{\begin{picture}(0,0)(0,0)\put(#1,#2){#3}\end{picture}} % just a shorthand
+\newcommand{\yesitem}{\item[\checkmark]}
+\newcommand{\noitem}{\item[\texttimes]}
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\tiny}
+\newcommand<>{\fullsizegraphic}[3]{
+  \begin{textblock*}{0cm}(#1,#2)
+  \includegraphics[width=\paperwidth]{#3}
+  \end{textblock*}
+}
+\date{}
+\author{marcel.hlopko@fit.cvut.cz}
+\title{Garbage Collection}
+
+\begin{document}
+
+\maketitle
+%\begin{frame}
+%\section{foo}
+%\end{frame}
+\begin{frame}
+	\frametitle{Problem}
+
+	We need to allcoate memory, and we have to free it back.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Manual Deallocation}
+	\begin{itemize}
+			\noitem hinders design and extensibility
+			\noitem forces bookkeeping
+			\noitem GC can be faster\footnote{
+				Andrew W. Appel. Garbage collection can be faster than stack
+			allocation.  \textit{Information Processing Letters, 25(4):275-279,
+		June 1987.}},
+		usually comparative\footnote{ 
+			Benjamin Zorn. The measured cost of conservative garbage
+		collection.  \textit{Software --- Practice and Experience},
+		23(7):733-756, 1993}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Manual Deallocation}
+	A lot of large applications ended up implementing some form of automatic
+	memory management themselves.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Let's Make a GC}
+	\begin{itemize}
+		\item How to find live / gargabe objects\qmark
+		\item How to reclaim garbage\qmark
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Object liveness}
+	Root Set \ampersandmark Reachability
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Live Objects}
+	\begin{itemize}
+		\item Reference Counting
+		\item Tracing
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reference Counting}
+	\begin{itemize}
+		\item \emphtext{refCount} stored in object header
+		\item object reclaimed when \emphtext{refCount} reaches 0
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Reference Counting}
+	\begin{itemize}
+		\yesitem incremental nature
+		\yesitem easy to make real-time
+		\yesitem degrades well with full heap			
+		\noitem \emphtext{cycles}
+		\noitem overhead
+		\noitem fragmentation
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Can we do better?}
+
+	Tracing algorithms
+	\begin{itemize}
+		\item GC is not running always
+		\item GC scans the whole heap
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mark-Sweep}
+	\begin{itemize}
+		\item marking live objects
+		\item sweeping all unmarked
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mark-Sweep}
+	\begin{itemize}
+		\yesitem handles cycles
+		\noitem fragmentation
+		\noitem bigger heap - longer run
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mark-Compact}
+	\mottotext{How about "defragmenting" living objects?}
+	\begin{itemize}
+		\yesitem solves fragmentation
+		\yesitem solves referential locality
+		\yesitem simple allocation
+		\noitem still multiple passes over heap
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Baker}
+	\mottotext{How about copying objects on the fly?}
+	2 semispaces, only one used at the time
+\end{frame}
+
+\begin{frame}
+	\frametitle{Baker}	
+	\begin{itemize}
+		\yesitem only one run over the heap
+		\noitem memory demanding
+		\noitem still has to stop the world
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Incremental Collectors}
+	GC runs in parallel with application (\emphtext{mutator})
+
+	\emphtext{relaxed consistency}
+
+	(conservative approximation of the true reachability graph)
+\end{frame}
+
+\begin{frame}
+	\frametitle{Tricolor Marking}
+	\emphtext{black} will be retained
+
+	\emphtext{white} will be collected
+
+	\emphtext{grey} will be expanded
+\end{frame}
+
+\begin{frame}
+	\frametitle{Incremental Algorithm}
+	\begin{itemize}
+		\item color root set grey
+		\item while grey set is not empty
+			\begin{enumerate}
+				\item take grey object
+				\item color all his white children grey
+				\item color object black
+			\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mutator mutates}
+
+	Mutator can assign a \emphtext{white} child into the \emphtext{black} object
+
+	Solutions:
+	\begin{itemize}
+		\item read barrier
+		\item write barrier
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Read Barrier}
+	Detect reads of white objects and color them grey immediately.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Read Barrier}
+	\begin{itemize}
+		\yesitem mutator "keeps itself" inside grey wave
+		\noitem usually too expensive
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Baker's Read Barrier GC}
+	\begin{itemize}
+		\item \emphtext{atomic} flip 
+		\item mutator resumed
+		\item fromspace access is \emphtext{trapped}
+		\item fromspace object copied first
+		\item copied objects colored grey
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Write Barrier}
+	Detect writes into black objects.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Snapshot-at-beginning}
+	Does not allow the pointer to be overwritten, it stores the original
+	pointer "off to the side".
+
+	Very \emphtext{conservative}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Incremental Update}
+
+	When a reference to a white object is stored into 
+	the black object, the black object can be greyed (Steele) or
+	the white object can be greyed (Dijkstra)
+\end{frame}
+
+\begin{frame}
+	\frametitle{Object Age}
+	\begin{center}
+		80-98\% short lived objects.
+
+		Many survivors will survive a lot.
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Generations}
+	Heap will be divided into multiple sections, each containing different generations of objects.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Generations}
+	\begin{itemize}
+		\item \emphtext{young} generation, GC'ed very often
+			(JVM default size: 640kb)
+
+		\item \emphtext{old} generation, GC'ed less often
+			(JVM default size: 64mb)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Remembered Sets}
+
+	References from old gen. to eden are recorded.
+
+	All such old gen. objects are part of the root set for young gen.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Questions And Discussion}
+
+	\emphtext{Literature:}
+	λ
+	Uniprocessor Garbage Collection Techniques, Paul R. Wilson
+\end{frame}
+\end{document}
+
